@@ -72,7 +72,7 @@ if selected != "Show All":
     folium.Marker(
         location=[row["latitude"], row["longitude"]],
         popup=row["name"],
-        icon=folium.Icon(color="red", icon="info-sign"),
+        icon=folium.Icon(color="yellow", icon="info-sign"),
     ).add_to(m)
 
 # Add map to Streamlit

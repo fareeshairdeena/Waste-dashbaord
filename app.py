@@ -82,20 +82,23 @@ map_data = st_folium(m, width=900, height=550, key=selected)
 # ============================================================
 # 7️⃣ Display image + details
 # ============================================================
-st.subheader("📷 Hotspot Details")
+selected = st.selectbox("Select hotspot:", df["name"])
 
+info = df[df["name"] == selected].iloc[0]
 col1, col2 = st.columns([1, 2])
+
 with col1:
-    image = load_image(selected_row["image_file"])
+    image = load_image(info["image_file"])
     if image:
-        st.image(image, caption=selected_row["name"], use_container_width=True)
+        st.image(image, caption=info["name"], use_container_width=True)
+
 with col2:
     st.markdown(f"""
-    ### 🏷️ {selected_row['name']}
-    - **Latitude:** {selected_row['latitude']}
-    - **Longitude:** {selected_row['longitude']}
-    - **Status:** {selected_row['status']}
-    - **Notes:** {selected_row['notes']}
+    ### 🏷️ {info['name']}
+    - **Latitude:** {info['latitude']}
+    - **Longitude:** {info['longitude']}
+    - **Status:** {info['status']}
+    - **Notes:** {info['notes']}
     """)
 
 # ============================================================

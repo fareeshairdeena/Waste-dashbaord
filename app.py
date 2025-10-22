@@ -44,7 +44,7 @@ conn.close()
 # Google Earth-like view (Satellite)
 m = folium.Map(
     location=[2.9, 101.6],
-    zoom_start=13,
+    zoom_start=17,
     tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
     attr='Google Earth Satellite'
 )

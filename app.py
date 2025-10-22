@@ -57,7 +57,7 @@ for _, row in df.iterrows():
     folium.Marker(
         location=[row['latitude'], row['longitude']],
         popup=popup_html,
-        icon=folium.Icon(color="yellow", icon="pin location"),
+        icon=folium.Icon(color="blue", icon="pin location"),
     ).add_to(m)
 
 st.subheader("🗺️ Hotspot Location")

@@ -41,7 +41,13 @@ conn.close()
 # ============================================================
 # 5️⃣ Create and display map
 # ============================================================
-m = folium.Map(location=[2.86, 101.68], zoom_start=13)
+# Google Earth-like view (Satellite)
+m = folium.Map(
+    location=[2.9, 101.6],
+    zoom_start=13,
+    tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+    attr='Google Earth Satellite'
+)
 for _, row in df.iterrows():
     popup_html = f"""
     <b>{row['name']}</b><br>
@@ -51,7 +57,7 @@ for _, row in df.iterrows():
     folium.Marker(
         location=[row['latitude'], row['longitude']],
         popup=popup_html,
-        icon=folium.Icon(color="blue", icon="pin location"),
+        icon=folium.Icon(color="dark green", icon="pin location"),
     ).add_to(m)
 
 st.subheader("🗺️ Hotspot Location")

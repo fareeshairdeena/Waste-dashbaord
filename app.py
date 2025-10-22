@@ -67,8 +67,8 @@ for _, row in df.iterrows():
     ).add_to(m)
 
 # Add map to Streamlit
-st.subheader("🗺️ Hotspot Location (Auto Zoom Enabled)")
-st_folium(m, width=850, height=500)
+st.subheader("🗺️ Hotspot Location")
+map_data = st_folium(m, width=900, height=550, key=selected)
 
 # ============================================================
 # 7️⃣ Display image + details
@@ -92,7 +92,7 @@ with col2:
 # ============================================================
 # 8️⃣ Display table view (optional but useful)
 # ============================================================
-st.markdown("### 📋 All Hotspots Summary")
+st.markdown("### 📋 Hotspots Summary")
 st.dataframe(df[["name", "latitude", "longitude", "status", "notes"]])
 
 st.markdown("---")

@@ -68,7 +68,7 @@ for _, row in df.iterrows():
 if selected != "Show All":
     row = df[df["name"] == selected].iloc[0]
     m.location = [row["latitude"], row["longitude"]]
-    m.zoom_start = 17  # closer zoom
+    m.zoom_start = 12  # closer zoom
     folium.Marker(
         location=[row["latitude"], row["longitude"]],
         popup=row["name"],

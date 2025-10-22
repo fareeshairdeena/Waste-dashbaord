@@ -56,14 +56,23 @@ for _, row in df.iterrows():
     popup_html = f"""
     <b>{row['name']}</b><br>
     <i>{row['status']}</i><br>
-    Notes: {row['notes']}<br>
+    {row['notes']}<br>
     """
-    icon_color = "green" if row["name"] == selected else "red"
     folium.Marker(
         location=[row["latitude"], row["longitude"]],
         popup=popup_html,
-        tooltip=row["name"],
-        icon=folium.Icon(color=icon_color, icon="info-sign"),
+        icon=folium.Icon(color="blue", icon="info-sign"),
+    ).add_to(m)
+
+# If a specific hotspot is selected, zoom to it
+if selected != "Show All":
+    row = df[df["name"] == selected].iloc[0]
+    m.location = [row["latitude"], row["longitude"]]
+    m.zoom_start = 17  # closer zoom
+    folium.Marker(
+        location=[row["latitude"], row["longitude"]],
+        popup=row["name"],
+        icon=folium.Icon(color="red", icon="info-sign"),
     ).add_to(m)
 
 # Add map to Streamlit

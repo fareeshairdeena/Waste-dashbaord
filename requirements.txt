@@ -1,5 +1,8 @@
 streamlit
 pandas
-geopandas
 folium
-sqlite3
+geopandas
+branca
+shapely
+fiona
+pyproj

@@ -46,7 +46,7 @@ selected_row = df[df["name"] == selected].iloc[0]
 # ============================================================
 m = folium.Map(
     location=[selected_row["latitude"], selected_row["longitude"]],
-    zoom_start=12,  # zoom in closer to selected hotspot
+    zoom_start=17,  # zoom in closer to selected hotspot
     tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
     attr='Google Earth Satellite'
 )

@@ -24,8 +24,8 @@ def load_image(filename):
 # ============================================================
 # 3️⃣ Page setup
 # ============================================================
-st.set_page_config(page_title="Waste Hotspot Dashboard", layout="wide")
-st.title("🚨 Waste Hotspot Monitoring Dashboard")
+st.set_page_config(page_title="Papan Pemuka Inventori AI/IoT", layout="wide")
+st.title("🚨 Papan Pemuka Inventori AI/IoT")
 
 # ============================================================
 # 4️⃣ Load the database
@@ -37,7 +37,7 @@ conn.close()
 # ============================================================
 # 5️⃣ Sidebar selection
 # ============================================================
-st.sidebar.header("🔍 Hotspot Selection")
+st.sidebar.header("🔍 Pemilihan Lokasi")
 selected = st.sidebar.selectbox("Select a Hotspot:", df["name"])
 selected_row = df[df["name"] == selected].iloc[0]
 
@@ -71,21 +71,21 @@ for _, row in df.iterrows():
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    st.subheader("🗺️ Hotspot Map")
+    st.subheader("🗺️ Peta Lokasi Hotspot Sampah Haram")
     st_folium(m, width=850, height=550, key=selected)
 
 with col2:
-    st.subheader("📸 Hotspot Details")
+    st.subheader("📸 Penerangan kawasan Hotspot Sampah Haram")
     image = load_image(selected_row["image_file"])
     if image:
         st.image(image, caption=selected_row["name"], use_container_width=True)
 
     st.markdown(f"""
     ### 🏷️ {selected_row['name']}
-    - **Latitude:** {selected_row['latitude']}
-    - **Longitude:** {selected_row['longitude']}
+    - **Latitud:** {selected_row['latitude']}
+    - **Longitud:** {selected_row['longitude']}
     - **Status:** {selected_row['status']}
-    - **Notes:** {selected_row['notes']}
+    - **Nota:** {selected_row['notes']}
     """)
 
 # ============================================================
@@ -96,9 +96,9 @@ import streamlit as st
 import pandas as pd
 
 st.markdown("---")
-st.subheader("📊 Regional Waste Management Data")
+st.subheader("📊 Data Pengurusan Sisa Pepejal")
 
-# --- Region selection
+# --- Region selectionRegional Waste Management Data
 region = st.selectbox("Select Region:", ["Selangor", "Penang"])
 
 # --- Define file paths (GitHub RAW CSV links)
@@ -153,4 +153,4 @@ for i, (label, url) in enumerate(files[region].items(), start=1):
 # 9️⃣ Footer
 # ============================================================
 st.markdown("---")
-st.caption("Developed for Smart Waste Monitoring using IoT & GeoAI 🌍")
+st.caption("Developed by UPM for Smart Waste Monitoring using Drone, AIIoT and GeoAI 🌍")

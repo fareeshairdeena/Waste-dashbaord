@@ -95,28 +95,39 @@ with col2:
 st.markdown("---")
 st.subheader("📊 Regional Waste Management Data")
 
-# --- Region selection (Sidebar or main area)
+# --- Region selection
 region = st.selectbox("Select Region:", ["Selangor", "Penang"])
 
 # --- Define file paths (GitHub raw links)
 files = {
     "Selangor": {
-        "drone": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Selangor.xls",
+        "drone": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Selangor.xlsx",
         "aduan": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Selangor%202020_2025.xls"
     },
     "Penang": {
-        "drone": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Penang.xls",
+        "drone": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Penang.xlsx",
         "aduan": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Penang%202020_2025.xls"
     }
 }
 
+# --- Safe Excel loader function
+def load_excel(file_url):
+    try:
+        if file_url.endswith(".xls"):
+            return pd.read_excel(file_url, engine="xlrd")
+        else:
+            return pd.read_excel(file_url, engine="openpyxl")
+    except Exception as e:
+        st.error(f"⚠️ Error reading file ({file_url}): {e}")
+        return pd.DataFrame()
+
 # --- Load Excel files based on region
-try:
-    # Detect engine type automatically
-    df_drone = pd.read_excel(files[region]["drone"], engine="xlrd" if files[region]["drone"].endswith(".xls") else "openpyxl")
-    df_aduan = pd.read_excel(files[region]["aduan"], engine="xlrd" if files[region]["aduan"].endswith(".xls") else "openpyxl")
-except Exception as e:
-    st.error(f"❌ Error loading data: {e}")
+df_drone = load_excel(files[region]["drone"])
+df_aduan = load_excel(files[region]["aduan"])
+
+# --- Check if data loaded
+if df_drone.empty or df_aduan.empty:
+    st.warning(f"⚠️ One or both datasets for {region} are empty or unreadable.")
     st.stop()
 
 # --- Add numbering columns
@@ -149,8 +160,6 @@ with col2:
         file_name=f"Aduan_JAS_{region}.csv",
         mime="text/csv"
     )
-
-
 # ============================================================
 # 9️⃣ Footer
 # ============================================================

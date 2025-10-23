@@ -95,44 +95,42 @@ with col2:
 st.markdown("---")
 st.subheader("📊 Regional Waste Management Data")
 
-# --- Region selection
+# --- Region selection (Sidebar or main area)
 region = st.selectbox("Select Region:", ["Selangor", "Penang"])
 
-# --- Define file paths (use your GitHub raw links or local file paths)
+# --- Define file paths (GitHub raw links)
 files = {
     "Selangor": {
-        "drone": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Selangor%202020_2025.xls",
+        "drone": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Selangor.xls",
         "aduan": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Selangor%202020_2025.xls"
     },
     "Penang": {
-        "drone": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Penang.xlsx",
+        "drone": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Penang.xls",
         "aduan": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Penang%202020_2025.xls"
     }
 }
 
 # --- Load Excel files based on region
 try:
-    df_drone = pd.read_excel(files[region]["drone"])
-    df_aduan = pd.read_excel(files[region]["aduan"])
+    # Detect engine type automatically
+    df_drone = pd.read_excel(files[region]["drone"], engine="xlrd" if files[region]["drone"].endswith(".xls") else "openpyxl")
+    df_aduan = pd.read_excel(files[region]["aduan"], engine="xlrd" if files[region]["aduan"].endswith(".xls") else "openpyxl")
 except Exception as e:
     st.error(f"❌ Error loading data: {e}")
     st.stop()
 
 # --- Add numbering columns
-df_drone.index = range(1, len(df_drone) + 1)
-df_drone.index.name = "No."
-
-df_aduan.index = range(1, len(df_aduan) + 1)
-df_aduan.index.name = "No."
+df_drone.insert(0, "No.", range(1, len(df_drone) + 1))
+df_aduan.insert(0, "No.", range(1, len(df_aduan) + 1))
 
 # --- Display both tables side by side
 col1, col2 = st.columns(2)
 
 with col1:
     st.markdown(f"### 🛰️ Drone Site Verification – {region}")
-    st.info(f"Total Records: **{len(df_drone)}**")
+    st.info(f"📊 Total Records: **{len(df_drone)}**")
     st.dataframe(df_drone, use_container_width=True)
-    csv1 = df_drone.to_csv(index=True).encode('utf-8')
+    csv1 = df_drone.to_csv(index=False).encode('utf-8')
     st.download_button(
         label=f"📥 Download Drone Data ({region})",
         data=csv1,
@@ -142,15 +140,16 @@ with col1:
 
 with col2:
     st.markdown(f"### 🧾 Initial Complaints Received by JAS – {region}")
-    st.info(f"Total Records: **{len(df_aduan)}**")
+    st.info(f"📊 Total Records: **{len(df_aduan)}**")
     st.dataframe(df_aduan, use_container_width=True)
-    csv2 = df_aduan.to_csv(index=True).encode('utf-8')
+    csv2 = df_aduan.to_csv(index=False).encode('utf-8')
     st.download_button(
         label=f"📥 Download Aduan Data ({region})",
         data=csv2,
         file_name=f"Aduan_JAS_{region}.csv",
         mime="text/csv"
     )
+
 
 # ============================================================
 # 9️⃣ Footer

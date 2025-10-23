@@ -101,15 +101,11 @@ st.write(f"**Total Hotspots:** {len(df)}")
 st.dataframe(df[["name", "latitude", "longitude", "status", "notes"]], use_container_width=True)
 
 # Download button for Excel
-output = BytesIO()
-with pd.ExcelWriter(output, engine='openpyxl') as writer:
-    df.to_excel(writer, index=False, sheet_name='Hotspots')
-excel_data = output.getvalue()
-
+csv = df.to_csv(index=False).encode('utf-8')
 st.download_button(
-    label="📥 Download Table as Excel",
-    data=excel_data,
-    file_name="hotspot_summary.xlsx",
+    label="📥 Download Table as CSV",
+    data=csv,
+    file_name="hotspot_summary.csv",
     mime="text/csv"
 )
 

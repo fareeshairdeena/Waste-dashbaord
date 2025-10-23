@@ -130,6 +130,16 @@ for i, (label, url) in enumerate(files[region].items(), start=1):
         st.warning(f"⚠️ Dataset for {label} ({region}) is empty or unreadable.")
         continue
 
+    # 🧹 Filter only for Aduan JAS and Hotspot tables
+    if label in ["Aduan JAS 2020–2025", "Hotspot Sampah GIS"]:
+        if "Nama Punca" in df.columns:
+            before = len(df)
+            df = df[df["Nama Punca"].notna()]
+            df = df[df["Nama Punca"].astype(str).str.strip() != ""]
+            removed = before - len(df)
+            if removed > 0:
+                st.info(f"🧹 Removed {removed} rows with empty 'Nama Punca'")
+
     # Add numbering column
     df.insert(0, "No.", range(1, len(df) + 1))
 

@@ -24,8 +24,8 @@ def load_image(filename):
 # ============================================================
 # 3️⃣ Page setup
 # ============================================================
-st.set_page_config(page_title="Waste Hotspot Dashboard", layout="wide")
-st.title("🚨 Waste Hotspot Monitoring Dashboard")
+st.set_page_config(page_title="Papan Pemuka AI/IoT Sampah Haram", layout="wide")
+st.title("🚨 Papan Pemuka AI/IoT Sampah Haram")
 
 # ============================================================
 # 4️⃣ Load the database
@@ -37,9 +37,9 @@ conn.close()
 # ============================================================
 # 5️⃣ Sidebar selection
 # ============================================================
-st.sidebar.header("🔍 Hotspot Selection")
+st.sidebar.header("🔍 Lokasi Hotspot")
 selected = st.sidebar.selectbox("Select a Hotspot:", df["name"])
-selected_row = df[df["name"] == selected].iloc[0]
+selected_row = df[df["Kawasan"] == selected].iloc[0]
 
 # ============================================================
 # 6️⃣ Create base map (Google Earth Hybrid)

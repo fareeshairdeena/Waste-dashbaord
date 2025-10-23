@@ -91,23 +91,66 @@ with col2:
 # ============================================================
 # 8️⃣ Table view + Download option
 # ============================================================
+
 st.markdown("---")
-st.subheader("📋 Hotspots Summary Table")
+st.subheader("📊 Regional Waste Management Data")
 
-# Show number of hotspots
-st.write(f"**Total Hotspots:** {len(df)}")
+# --- Region selection
+region = st.selectbox("Select Region:", ["Selangor", "Penang"])
 
-# Display table
-st.dataframe(df[["name", "latitude", "longitude", "status", "notes"]], use_container_width=True)
+# --- Define file paths (use your GitHub raw links or local file paths)
+files = {
+    "Selangor": {
+        "drone": "Hotspot sampah GIS Selangor.xlsx",
+        "aduan": "Aduan JAS Selangor 2020_2025.xls"
+    },
+    "Penang": {
+        "drone": "Hotspot sampah GIS Penang.xlsx",
+        "aduan": "Aduan JAS Penang 2020_2025.xls"
+    }
+}
 
-# Download button for Excel
-csv = df.to_csv(index=False).encode('utf-8')
-st.download_button(
-    label="📥 Download Table as CSV",
-    data=csv,
-    file_name="hotspot_summary.csv",
-    mime="text/csv"
-)
+# --- Load Excel files based on region
+try:
+    df_drone = pd.read_excel(files[region]["drone"])
+    df_aduan = pd.read_excel(files[region]["aduan"])
+except Exception as e:
+    st.error(f"❌ Error loading data: {e}")
+    st.stop()
+
+# --- Add numbering columns
+df_drone.index = range(1, len(df_drone) + 1)
+df_drone.index.name = "No."
+
+df_aduan.index = range(1, len(df_aduan) + 1)
+df_aduan.index.name = "No."
+
+# --- Display both tables side by side
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown(f"### 🛰️ Drone Site Verification – {region}")
+    st.info(f"Total Records: **{len(df_drone)}**")
+    st.dataframe(df_drone, use_container_width=True)
+    csv1 = df_drone.to_csv(index=True).encode('utf-8')
+    st.download_button(
+        label=f"📥 Download Drone Data ({region})",
+        data=csv1,
+        file_name=f"Drone_Site_{region}.csv",
+        mime="text/csv"
+    )
+
+with col2:
+    st.markdown(f"### 🧾 Initial Complaints Received by JAS – {region}")
+    st.info(f"Total Records: **{len(df_aduan)}**")
+    st.dataframe(df_aduan, use_container_width=True)
+    csv2 = df_aduan.to_csv(index=True).encode('utf-8')
+    st.download_button(
+        label=f"📥 Download Aduan Data ({region})",
+        data=csv2,
+        file_name=f"Aduan_JAS_{region}.csv",
+        mime="text/csv"
+    )
 
 # ============================================================
 # 9️⃣ Footer

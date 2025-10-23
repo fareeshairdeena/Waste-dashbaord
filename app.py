@@ -94,8 +94,8 @@ with col2:
 st.markdown("---")
 st.subheader("📋 Hotspots Summary Table")
 
-# Show number of hotspots
-st.write(f"**Total Hotspots:** {len(df)}")
+# Show total count ABOVE the table
+st.info(f"📊 Total hotspots in database: **{len(df)}**")
 
 # Display table
 st.dataframe(df[["name", "latitude", "longitude", "status", "notes"]], use_container_width=True)

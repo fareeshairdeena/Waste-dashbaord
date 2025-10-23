@@ -97,15 +97,18 @@ st.subheader("📋 Hotspots Summary Table")
 # Show number of hotspots
 st.write(f"**Total Hotspots:** {len(df)}")
 
-# Display table
-st.dataframe(df[["name", "latitude", "longitude", "status", "notes"]], use_container_width=True)
+# Keep only useful columns for display and export
+table_columns = ["name", "latitude", "longitude", "status", "notes", "image_link"]
 
-# Download button for Excel
-csv = df.to_csv(index=False).encode('utf-8')
+# Display table
+st.dataframe(df[table_columns], use_container_width=True)
+
+# Download button (CSV with image links)
+csv_data = df[table_columns].to_csv(index=False).encode('utf-8')
 st.download_button(
-    label="📥 Download Table as CSV",
-    data=csv,
-    file_name="hotspot_summary.csv",
+    label="📥 Download Table as CSV (with Image Links)",
+    data=csv_data,
+    file_name="hotspot_summary_with_links.csv",
     mime="text/csv"
 )
 

@@ -8,12 +8,12 @@ from streamlit_folium import st_folium
 import sqlite3
 import pandas as pd
 from PIL import Image
+from io import BytesIO
 
 # ============================================================
-# 2️⃣ Define helper function to load images
+# 2️⃣ Helper function to load images
 # ============================================================
 def load_image(filename):
-    # Image folder path
     img_path = os.path.join("Images", filename)
     if os.path.exists(img_path):
         return Image.open(img_path)
@@ -38,74 +38,83 @@ conn.close()
 # 5️⃣ Sidebar selection
 # ============================================================
 st.sidebar.header("🔍 Hotspot Selection")
-selected = st.sidebar.selectbox("Select a Hotspot to Zoom:", df["name"])
+selected = st.sidebar.selectbox("Select a Hotspot:", df["name"])
 selected_row = df[df["name"] == selected].iloc[0]
 
 # ============================================================
-# 6️⃣ Create base map (Google Earth view)
+# 6️⃣ Create base map (Google Earth Hybrid)
 # ============================================================
 m = folium.Map(
     location=[selected_row["latitude"], selected_row["longitude"]],
     zoom_start=17,
     tiles='https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-    attr='Google Maps Hybrid'
+    attr='Google Earth Hybrid'
 )
 
-# Add all hotspot markers
+# Add all markers
 for _, row in df.iterrows():
     popup_html = f"""
     <b>{row['name']}</b><br>
     <i>{row['status']}</i><br>
-    {row['notes']}<br>
+    {row['notes']}
     """
+    color = "green" if row['name'] == selected else "blue"
     folium.Marker(
         location=[row["latitude"], row["longitude"]],
         popup=popup_html,
-        icon=folium.Icon(color="blue", icon="info-sign"),
+        icon=folium.Icon(color=color, icon="info-sign"),
     ).add_to(m)
 
-# If a specific hotspot is selected, zoom to it
-if selected != "Show All":
-    row = df[df["name"] == selected].iloc[0]
-    m.location = [row["latitude"], row["longitude"]]
-    m.zoom_start = 17  # closer zoom
-    folium.Marker(
-        location=[row["latitude"], row["longitude"]],
-        popup=row["name"],
-        icon=folium.Icon(color="green", icon="info-sign"),
-    ).add_to(m)
-
-# Add map to Streamlit
-st.subheader("🗺️ Hotspot Location")
-map_data = st_folium(m, width=900, height=550, key=selected)
-
 # ============================================================
-# 7️⃣ Display image + details
+# 7️⃣ Layout: Map (Left) | Details + Image (Right)
 # ============================================================
-selected = st.selectbox("Select hotspot:", df["name"])
-
-info = df[df["name"] == selected].iloc[0]
-col1, col2 = st.columns([1, 2])
+col1, col2 = st.columns([2, 1])
 
 with col1:
-    image = load_image(info["image_file"])
-    if image:
-        st.image(image, caption=info["name"], use_container_width=True)
+    st.subheader("🗺️ Hotspot Map")
+    st_folium(m, width=850, height=550, key=selected)
 
 with col2:
+    st.subheader("📸 Hotspot Details")
+    image = load_image(selected_row["image_file"])
+    if image:
+        st.image(image, caption=selected_row["name"], use_container_width=True)
+
     st.markdown(f"""
-    ### 🏷️ {info['name']}
-    - **Latitude:** {info['latitude']}
-    - **Longitude:** {info['longitude']}
-    - **Status:** {info['status']}
-    - **Notes:** {info['notes']}
+    ### 🏷️ {selected_row['name']}
+    - **Latitude:** {selected_row['latitude']}
+    - **Longitude:** {selected_row['longitude']}
+    - **Status:** {selected_row['status']}
+    - **Notes:** {selected_row['notes']}
     """)
 
 # ============================================================
-# 8️⃣ Display table view (optional but useful)
+# 8️⃣ Table view + Download option
 # ============================================================
-st.markdown("### 📋 Hotspots Summary")
-st.dataframe(df[["name", "latitude", "longitude", "status", "notes"]])
+st.markdown("---")
+st.subheader("📋 Hotspots Summary Table")
 
+# Show number of hotspots
+st.write(f"**Total Hotspots:** {len(df)}")
+
+# Display table
+st.dataframe(df[["name", "latitude", "longitude", "status", "notes"]], use_container_width=True)
+
+# Download button for Excel
+output = BytesIO()
+with pd.ExcelWriter(output, engine='openpyxl') as writer:
+    df.to_excel(writer, index=False, sheet_name='Hotspots')
+excel_data = output.getvalue()
+
+st.download_button(
+    label="📥 Download Table as Excel",
+    data=excel_data,
+    file_name="hotspot_summary.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
+
+# ============================================================
+# 9️⃣ Footer
+# ============================================================
 st.markdown("---")
 st.caption("Developed for Smart Waste Monitoring using IoT & GeoAI 🌍")

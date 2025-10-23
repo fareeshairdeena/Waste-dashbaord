@@ -91,30 +91,20 @@ with col2:
 # ============================================================
 # 8️⃣ Table view + Download option
 # ============================================================
-st.markdown("---")
-st.subheader("📋 Hotspots Summary Table")
+# Base URL for image hosting (replace with your app URL)
+BASE_URL = "https://waste-dashbaord.streamlit.app/Images/"
 
-# Show number of hotspots
-st.write(f"**Total Hotspots:** {len(df)}")
+# Add a new 'image' column with full URL
+df["image"] = df["image_file"].apply(lambda x: f"{BASE_URL}{x}")
 
-# Rename 'image_file' → 'image' for display & export
-df_display = df.rename(columns={'image_file': 'image'})
+# Use 'image' instead of 'image_file' in table & CSV
+table_columns = ["name", "latitude", "longitude", "status", "notes", "image"]
+st.dataframe(df[table_columns], use_container_width=True)
 
-# Define columns to show (auto-skip missing ones)
-table_columns = [col for col in ["name", "latitude", "longitude", "status", "notes", "image"] if col in df_display.columns]
+# Downloadable CSV
+csv_data = df[table_columns].to_csv(index=False).encode("utf-8")
+st.download_button("📥 Download Table as CSV", csv_data, "hotspot_summary.csv", "text/csv")
 
-# Show table
-st.dataframe(df_display[table_columns], use_container_width=True)
-
-# Prepare CSV for download
-csv_data = df_display[table_columns].to_csv(index=False).encode('utf-8')
-
-st.download_button(
-    label="📥 Download Table as CSV",
-    data=csv_data,
-    file_name="hotspot_summary.csv",
-    mime="text/csv"
-)
 
 # ============================================================
 # 9️⃣ Footer

@@ -8,103 +8,109 @@ from streamlit_folium import st_folium
 import sqlite3
 import pandas as pd
 from PIL import Image
+from io import BytesIO
 
 # ============================================================
-# 2️⃣ Page setup
+# 2️⃣ Helper function to load images
+# ============================================================
+def load_image(filename):
+    img_path = os.path.join("Images", filename)
+    if os.path.exists(img_path):
+        return Image.open(img_path)
+    else:
+        st.warning(f"Image not found: {img_path}")
+        return None
+
+# ============================================================
+# 3️⃣ Page setup
 # ============================================================
 st.set_page_config(page_title="Waste Hotspot Dashboard", layout="wide")
 st.title("🚨 Waste Hotspot Monitoring Dashboard")
 
 # ============================================================
-# 3️⃣ Load the database
+# 4️⃣ Load the database
 # ============================================================
 conn = sqlite3.connect("hotspots.db")
 df = pd.read_sql_query("SELECT * FROM hotspots", conn)
 conn.close()
 
-# Rename column for compatibility
-if "image_file" in df.columns and "image_link" not in df.columns:
-    df.rename(columns={"image_file": "image_link"}, inplace=True)
-
 # ============================================================
-# 4️⃣ Sidebar selection
+# 5️⃣ Sidebar selection
 # ============================================================
 st.sidebar.header("🔍 Hotspot Selection")
 selected = st.sidebar.selectbox("Select a Hotspot:", df["name"])
 selected_row = df[df["name"] == selected].iloc[0]
 
 # ============================================================
-# 5️⃣ Create base map (Google Earth Hybrid)
+# 6️⃣ Create base map (Google Earth Hybrid)
 # ============================================================
 m = folium.Map(
     location=[selected_row["latitude"], selected_row["longitude"]],
     zoom_start=17,
     tiles='https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-    attr='Google Maps Hybrid'
+    attr='Google Earth Hybrid'
 )
 
-# Add all hotspot markers
+# Add all markers
 for _, row in df.iterrows():
     popup_html = f"""
     <b>{row['name']}</b><br>
     <i>{row['status']}</i><br>
-    {row['notes']}<br>
+    {row['notes']}
     """
+    color = "green" if row['name'] == selected else "blue"
     folium.Marker(
         location=[row["latitude"], row["longitude"]],
         popup=popup_html,
-        icon=folium.Icon(color="blue", icon="info-sign"),
+        icon=folium.Icon(color=color, icon="info-sign"),
     ).add_to(m)
 
-# Highlight selected hotspot
-folium.Marker(
-    location=[selected_row["latitude"], selected_row["longitude"]],
-    popup=selected_row["name"],
-    icon=folium.Icon(color="green", icon="info-sign"),
-).add_to(m)
-
 # ============================================================
-# 6️⃣ Layout: Map on left, Details on right
+# 7️⃣ Layout: Map (Left) | Details + Image (Right)
 # ============================================================
-col1, col2 = st.columns([1.3, 1])
+col1, col2 = st.columns([2, 1])
 
 with col1:
-    st.subheader("🗺️ Hotspot Location")
-    st_folium(m, width=900, height=550, key=selected)
+    st.subheader("🗺️ Hotspot Map")
+    st_folium(m, width=850, height=550, key=selected)
 
 with col2:
     st.subheader("📸 Hotspot Details")
-    # Show image from Imgur/GitHub
-    st.image(selected_row["image_link"], caption=selected_row["name"], use_container_width=True)
+    image = load_image(selected_row["image_file"])
+    if image:
+        st.image(image, caption=selected_row["name"], use_container_width=True)
+
     st.markdown(f"""
     ### 🏷️ {selected_row['name']}
     - **Latitude:** {selected_row['latitude']}
     - **Longitude:** {selected_row['longitude']}
     - **Status:** {selected_row['status']}
     - **Notes:** {selected_row['notes']}
-    - **Image Link:** [Open Image]({selected_row['image_link']})
     """)
 
 # ============================================================
-# 7️⃣ Table view + Download
+# 8️⃣ Table view + Download option
 # ============================================================
-st.markdown("### 📋 Hotspots Summary")
+st.markdown("---")
+st.subheader("📋 Hotspots Summary Table")
 
-# Replace 'image_file' column with 'image_link' in table
-table_columns = ["name", "latitude", "longitude", "status", "notes", "image_link"]
-st.dataframe(df[table_columns], use_container_width=True)
+# Show number of hotspots
+st.write(f"**Total Hotspots:** {len(df)}")
 
-# Show total count
-st.info(f"📊 Total hotspots in database: **{len(df)}**")
+# Display table
+st.dataframe(df[["name", "latitude", "longitude", "status", "notes"]], use_container_width=True)
 
-# Download as CSV
-csv_data = df[table_columns].to_csv(index=False).encode("utf-8")
+# Download button for Excel
+csv = df.to_csv(index=False).encode('utf-8')
 st.download_button(
     label="📥 Download Table as CSV",
-    data=csv_data,
-    file_name="hotspots_summary.csv",
+    data=csv,
+    file_name="hotspot_summary.csv",
     mime="text/csv"
 )
 
+# ============================================================
+# 9️⃣ Footer
+# ============================================================
 st.markdown("---")
 st.caption("Developed for Smart Waste Monitoring using IoT & GeoAI 🌍")

@@ -89,7 +89,7 @@ with col2:
     """)
 
 # ============================================================
-# 8️⃣ Table view + Download option
+# 8️⃣ Table view + Download option (CSV version)
 # ============================================================
 
 st.markdown("---")
@@ -98,66 +98,51 @@ st.subheader("📊 Regional Waste Management Data")
 # --- Region selection
 region = st.selectbox("Select Region:", ["Selangor", "Penang"])
 
-# --- Define file paths (GitHub raw links)
+# --- Define file paths (GitHub RAW CSV links)
 files = {
     "Selangor": {
-        "drone": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Selangor.xlsx",
-        "aduan": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Selangor%202020_2025.xls"
+        "Aduan JAS 2020–2025": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Selangor%202020_2025.csv",
+        "Bilangan Aduan JAS": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Bilangan%20Aduan%20JAS%20Selangor.csv",
+        "Hotspot Sampah GIS": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Selangor.csv"
     },
     "Penang": {
-        "drone": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Penang.xlsx",
-        "aduan": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Penang%202020_2025.xls"
+        "Aduan JAS 2020–2025": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Penang%202020_2025.csv",
+        "Bilangan Aduan JAS": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Bilangan%20Aduan%20JAS%20Penang.csv",
+        "Hotspot Sampah GIS": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Penang.csv"
     }
 }
 
-# --- Safe Excel loader function
-def load_excel(file_url):
+# --- Safe CSV loader
+def load_csv(file_url):
     try:
-        if file_url.endswith(".xls"):
-            return pd.read_excel(file_url, engine="xlrd")
-        else:
-            return pd.read_excel(file_url, engine="openpyxl")
+        return pd.read_csv(file_url)
     except Exception as e:
         st.error(f"⚠️ Error reading file ({file_url}): {e}")
         return pd.DataFrame()
 
-# --- Load Excel files based on region
-df_drone = load_excel(files[region]["drone"])
-df_aduan = load_excel(files[region]["aduan"])
+# --- Display each table sequentially
+for i, (label, url) in enumerate(files[region].items(), start=1):
+    st.markdown("---")
+    st.subheader(f"{label} – {region}")
 
-# --- Check if data loaded
-if df_drone.empty or df_aduan.empty:
-    st.warning(f"⚠️ One or both datasets for {region} are empty or unreadable.")
-    st.stop()
+    df = load_csv(url)
+    if df.empty:
+        st.warning(f"⚠️ Dataset for {label} ({region}) is empty or unreadable.")
+        continue
 
-# --- Add numbering columns
-df_drone.insert(0, "No.", range(1, len(df_drone) + 1))
-df_aduan.insert(0, "No.", range(1, len(df_aduan) + 1))
+    # Add numbering column
+    df.insert(0, "No.", range(1, len(df) + 1))
 
-# --- Display both tables side by side
-col1, col2 = st.columns(2)
+    # Display data
+    st.info(f"📊 Total Records: **{len(df)}**")
+    st.dataframe(df, use_container_width=True)
 
-with col1:
-    st.markdown(f"### 🛰️ Drone Site Verification – {region}")
-    st.info(f"📊 Total Records: **{len(df_drone)}**")
-    st.dataframe(df_drone, use_container_width=True)
-    csv1 = df_drone.to_csv(index=False).encode('utf-8')
+    # Download CSV
+    csv = df.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label=f"📥 Download Drone Data ({region})",
-        data=csv1,
-        file_name=f"Drone_Site_{region}.csv",
-        mime="text/csv"
-    )
-
-with col2:
-    st.markdown(f"### 🧾 Initial Complaints Received by JAS – {region}")
-    st.info(f"📊 Total Records: **{len(df_aduan)}**")
-    st.dataframe(df_aduan, use_container_width=True)
-    csv2 = df_aduan.to_csv(index=False).encode('utf-8')
-    st.download_button(
-        label=f"📥 Download Aduan Data ({region})",
-        data=csv2,
-        file_name=f"Aduan_JAS_{region}.csv",
+        label=f"📥 Download {label} ({region})",
+        data=csv,
+        file_name=f"{label}_{region}.csv",
         mime="text/csv"
     )
 # ============================================================

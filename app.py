@@ -22,8 +22,9 @@ conn = sqlite3.connect("hotspots.db")
 df = pd.read_sql_query("SELECT * FROM hotspots", conn)
 conn.close()
 
-# Ensure your DB has a column like `image_link` (pointing to Imgur or GitHub raw URLs)
-# Example: https://raw.githubusercontent.com/username/repo/main/Images/hotspot_a.jpg
+# Rename column for compatibility
+if "image_file" in df.columns and "image_link" not in df.columns:
+    df.rename(columns={"image_file": "image_link"}, inplace=True)
 
 # ============================================================
 # 4️⃣ Sidebar selection

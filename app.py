@@ -110,7 +110,7 @@ st.download_button(
     label="📥 Download Table as Excel",
     data=excel_data,
     file_name="hotspot_summary.xlsx",
-    mime=""text/csv""
+    mime="text/csv"
 )
 
 # ============================================================

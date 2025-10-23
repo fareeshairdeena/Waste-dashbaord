@@ -92,6 +92,9 @@ with col2:
 # 8️⃣ Table view + Download option (CSV version)
 # ============================================================
 
+import streamlit as st
+import pandas as pd
+
 st.markdown("---")
 st.subheader("📊 Regional Waste Management Data")
 
@@ -130,23 +133,6 @@ for i, (label, url) in enumerate(files[region].items(), start=1):
         st.warning(f"⚠️ Dataset for {label} ({region}) is empty or unreadable.")
         continue
 
-    # 🔧 Clean up column names to remove extra/hidden spaces
-    df.columns = df.columns.str.strip().str.replace("\u00A0", " ")
-
-    # 🧹 Filter only for Aduan JAS and Hotspot tables
-    if label in ["Aduan JAS 2020–2025", "Hotspot Sampah GIS"]:
-        if "Nama Punca" in df.columns:
-            before = len(df)
-
-            # Remove rows with empty or None Nama Punca
-            df = df[df["Nama Punca"].notna()]
-            df["Nama Punca"] = df["Nama Punca"].astype(str).str.strip().replace("\u00A0", "")
-            df = df[df["Nama Punca"] != ""]
-
-            removed = before - len(df)
-            if removed > 0:
-                st.info(f"🧹 Removed {removed} rows with empty or missing 'Nama Punca'")
-
     # Add numbering column
     df.insert(0, "No.", range(1, len(df) + 1))
 
@@ -155,13 +141,14 @@ for i, (label, url) in enumerate(files[region].items(), start=1):
     st.dataframe(df, use_container_width=True)
 
     # Download CSV
-    csv = df.to_csv(index=False).encode("utf-8")
+    csv = df.to_csv(index=False).encode('utf-8')
     st.download_button(
         label=f"📥 Download {label} ({region})",
         data=csv,
         file_name=f"{label}_{region}.csv",
         mime="text/csv"
     )
+
 # ============================================================
 # 9️⃣ Footer
 # ============================================================

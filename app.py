@@ -101,12 +101,12 @@ region = st.selectbox("Select Region:", ["Selangor", "Penang"])
 # --- Define file paths (use your GitHub raw links or local file paths)
 files = {
     "Selangor": {
-        "drone": "Hotspot sampah GIS Selangor.xlsx",
-        "aduan": "Aduan JAS Selangor 2020_2025.xls"
+        "drone": "https://github.com/fareeshairdeena/Waste-dashbaord/blob/29190309ba60a96afb2843e066ea52c0e63ee486/Hotspot%20sampah%20GIS%20Selangor.xls",
+        "aduan": "https://github.com/fareeshairdeena/Waste-dashbaord/blob/29190309ba60a96afb2843e066ea52c0e63ee486/Aduan%20JAS%20Selangor%202020_2025.xls"
     },
     "Penang": {
-        "drone": "Hotspot sampah GIS Penang.xlsx",
-        "aduan": "Aduan JAS Penang 2020_2025.xls"
+        "drone": "https://github.com/fareeshairdeena/Waste-dashbaord/blob/29190309ba60a96afb2843e066ea52c0e63ee486/Hotspot%20sampah%20GIS%20Penang.xlsx",
+        "aduan": "https://github.com/fareeshairdeena/Waste-dashbaord/blob/29190309ba60a96afb2843e066ea52c0e63ee486/Aduan%20JAS%20Penang%202020_2025.xls"
     }
 }
 

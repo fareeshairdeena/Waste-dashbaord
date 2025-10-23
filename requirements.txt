@@ -9,3 +9,4 @@ pyproj
 branca
 Pillow
 openpyxl
+xlrd

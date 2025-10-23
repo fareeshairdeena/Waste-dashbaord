@@ -94,21 +94,25 @@ with col2:
 st.markdown("---")
 st.subheader("📋 Hotspots Summary Table")
 
+# Show number of hotspots
 st.write(f"**Total Hotspots:** {len(df)}")
 
-# Create table dynamically: include image_link only if exists
-table_columns = [col for col in ["name", "latitude", "longitude", "status", "notes", "image_link"] if col in df.columns]
+# Rename 'image_file' → 'image' for display & export
+df_display = df.rename(columns={'image_file': 'image'})
+
+# Define columns to show (auto-skip missing ones)
+table_columns = [col for col in ["name", "latitude", "longitude", "status", "notes", "image"] if col in df_display.columns]
 
 # Show table
-st.dataframe(df[table_columns], use_container_width=True)
+st.dataframe(df_display[table_columns], use_container_width=True)
 
-# Prepare CSV data
-csv_data = df[table_columns].to_csv(index=False).encode('utf-8')
+# Prepare CSV for download
+csv_data = df_display[table_columns].to_csv(index=False).encode('utf-8')
 
 st.download_button(
-    label="📥 Download Table as CSV (with Image Links if available)",
+    label="📥 Download Table as CSV",
     data=csv_data,
-    file_name="hotspot_summary_with_links.csv",
+    file_name="hotspot_summary.csv",
     mime="text/csv"
 )
 

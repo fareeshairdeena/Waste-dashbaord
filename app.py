@@ -99,7 +99,7 @@ st.markdown("---")
 st.subheader("📊 Data Pengurusan Sisa Pepejal")
 
 # --- Region selectionRegional Waste Management Data
-region = st.selectbox("Select Region:", ["Selangor", "Penang"])
+region = st.selectbox("Pemilihan Lokasi:", ["Selangor", "Penang"])
 
 # --- Define file paths (GitHub RAW CSV links)
 files = {

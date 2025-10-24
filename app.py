@@ -25,7 +25,7 @@ def load_image(filename):
 # 3️⃣ Page setup
 # ============================================================
 st.set_page_config(page_title="Papan Pemuka Inventori AI/IoT", layout="wide")
-st.title("🚨 Papan Pemuka Inventori AI/IoT")
+st.title("Papan Pemuka Inventori AI/IoT")
 
 # ============================================================
 # 4️⃣ Load the database

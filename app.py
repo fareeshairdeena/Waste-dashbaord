@@ -90,19 +90,23 @@ with col2:
     """)
 
 # ============================================================
-# 8️⃣ Table view + Download option (CSV version)
+# 8️⃣ Table view + Download option (Moved to Sidebar Control)
 # ============================================================
-
-import streamlit as st
-import pandas as pd
 
 st.markdown("---")
 st.subheader("📊 Data Pengurusan Sisa Pepejal")
 
-# --- Region selectionRegional Waste Management Data
-region = st.selectbox("Pemilihan Lokasi:", ["Selangor", "Penang"])
+# Sidebar controls
+st.sidebar.header("🗂️ Data Sisa Pepejal")
 
-# --- Define file paths (GitHub RAW CSV links)
+region = st.sidebar.selectbox("🌍 Pilih Lokasi Negeri:", ["Selangor", "Penang"])
+
+dataset_choice = st.sidebar.selectbox(
+    "📁 Pilih Dataset:",
+    ["Semua Dataset", "Aduan JAS 2020–2025", "Bilangan Aduan JAS", "Hotspot Sampah GIS"]
+)
+
+# File links
 files = {
     "Selangor": {
         "Aduan JAS 2020–2025": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Selangor%202020_2025.csv",
@@ -116,7 +120,6 @@ files = {
     }
 }
 
-# --- Safe CSV loader
 def load_csv(file_url):
     try:
         return pd.read_csv(file_url)
@@ -124,28 +127,28 @@ def load_csv(file_url):
         st.error(f"⚠️ Error reading file ({file_url}): {e}")
         return pd.DataFrame()
 
-# --- Display each table sequentially
-for i, (label, url) in enumerate(files[region].items(), start=1):
-    st.markdown("---")
-    st.subheader(f"{label} – {region}")
-
-    df = load_csv(url)
-    if df.empty:
-        st.warning(f"⚠️ Dataset for {label} ({region}) is empty or unreadable.")
+# Display selected dataset(s)
+for label, url in files[region].items():
+    if dataset_choice != "Semua Dataset" and dataset_choice != label:
         continue
 
-    # Add numbering column
-    df.insert(0, "No.", range(1, len(df) + 1))
+    df_data = load_csv(url)
 
-    # Display data
-    st.info(f"📊 Total Records: **{len(df)}**")
-    st.dataframe(df, use_container_width=True)
+    if df_data.empty:
+        st.warning(f"⚠️ Data {label} bagi {region} kosong!")
+        continue
 
-    # Download CSV
-    csv = df.to_csv(index=False).encode('utf-8')
+    df_data.insert(0, "No.", range(1, len(df_data) + 1))
+
+    st.markdown("---")
+    st.subheader(f"{label} – {region}")
+    st.info(f"📊 Jumlah Rekod: **{len(df_data)}**")
+
+    st.dataframe(df_data, use_container_width=True)
+
     st.download_button(
-        label=f"📥 Download {label} ({region})",
-        data=csv,
+        label=f"📥 Muat Turun {label} ({region})",
+        data=df_data.to_csv(index=False).encode("utf-8"),
         file_name=f"{label}_{region}.csv",
         mime="text/csv"
     )

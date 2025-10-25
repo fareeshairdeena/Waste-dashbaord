@@ -46,7 +46,7 @@ selected_row = df[df["name"] == selected].iloc[0]
 # ============================================================
 m = folium.Map(
     location=[selected_row["latitude"], selected_row["longitude"]],
-    zoom_start=17,
+    zoom_start=20,
     tiles='https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
     attr='Google Earth Hybrid'
 )

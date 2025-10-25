@@ -90,14 +90,14 @@ with col2:
     """)
 
 # ============================================================
-# 8️⃣ Table view + Download option (Moved to Sidebar Control)
+# 8️⃣ Table view + Download option (INSIDE SIDEBAR)
 # ============================================================
 
 st.markdown("---")
 st.subheader("📊 Data Pengurusan Sisa Pepejal")
 
-# Sidebar controls
-st.sidebar.header("🗂️ Data Sisa Pepejal")
+# Sidebar Table Section
+st.sidebar.header("🗂️ Data Pengurusan Sisa Pepejal")
 
 region = st.sidebar.selectbox("🌍 Pilih Lokasi Negeri:", ["Selangor", "Penang"])
 
@@ -106,7 +106,6 @@ dataset_choice = st.sidebar.selectbox(
     ["Semua Dataset", "Aduan JAS 2020–2025", "Bilangan Aduan JAS", "Hotspot Sampah GIS"]
 )
 
-# File links
 files = {
     "Selangor": {
         "Aduan JAS 2020–2025": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Selangor%202020_2025.csv",
@@ -120,34 +119,32 @@ files = {
     }
 }
 
-def load_csv(file_url):
+def load_csv(url):
     try:
-        return pd.read_csv(file_url)
-    except Exception as e:
-        st.error(f"⚠️ Error reading file ({file_url}): {e}")
+        return pd.read_csv(url)
+    except:
         return pd.DataFrame()
 
-# Display selected dataset(s)
+# Display dataset(s) in sidebar
 for label, url in files[region].items():
     if dataset_choice != "Semua Dataset" and dataset_choice != label:
         continue
 
     df_data = load_csv(url)
-
     if df_data.empty:
-        st.warning(f"⚠️ Data {label} bagi {region} kosong!")
+        st.sidebar.warning(f"❌ Data {label} tiada")
         continue
 
     df_data.insert(0, "No.", range(1, len(df_data) + 1))
 
-    st.markdown("---")
-    st.subheader(f"{label} – {region}")
-    st.info(f"📊 Jumlah Rekod: **{len(df_data)}**")
+    st.sidebar.markdown("---")
+    st.sidebar.write(f"🗂️ **{label} – {region}**")
+    st.sidebar.info(f"📊 Rekod: **{len(df_data)}**")
 
-    st.dataframe(df_data, use_container_width=True)
+    st.sidebar.dataframe(df_data, use_container_width=True, height=300)
 
-    st.download_button(
-        label=f"📥 Muat Turun {label} ({region})",
+    st.sidebar.download_button(
+        label=f"📥 Muat Turun",
         data=df_data.to_csv(index=False).encode("utf-8"),
         file_name=f"{label}_{region}.csv",
         mime="text/csv"

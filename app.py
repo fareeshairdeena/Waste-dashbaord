@@ -103,18 +103,18 @@ region = st.sidebar.selectbox("🌍 Pilih Lokasi Negeri:", ["Selangor", "Penang"
 
 dataset_choice = st.sidebar.selectbox(
     "📁 Pilih Dataset:",
-    ["Semua Dataset", "Aduan JAS 2020–2025", "Bilangan Aduan JAS", "Hotspot Sampah GIS"]
+    ["Semua Dataset", "Aduan Awam", "Bilangan Aduan JAS", "Hotspot Sampah GIS "]
 )
 
 files = {
     "Selangor": {
-        "Aduan JAS 2020–2025": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Selangor%202020_2025.csv",
-        "Bilangan Aduan JAS": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Bilangan%20Aduan%20JAS%20Selangor.csv",
-        "Hotspot Sampah GIS": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Selangor.csv"
+        "Aduan Awam ": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Selangor%202020_2025.csv",
+        "Bilangan Aduan ": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Bilangan%20Aduan%20JAS%20Selangor.csv",
+        "Hotspot Sampah GIS ": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Selangor.csv"
     },
     "Penang": {
-        "Aduan JAS 2020–2025": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Penang%202020_2025.csv",
-        "Bilangan Aduan JAS": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Bilangan%20Aduan%20JAS%20Penang.csv",
+        "Aduan Awam": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Aduan%20JAS%20Penang%202020_2025.csv",
+        "Bilangan Aduan": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Bilangan%20Aduan%20JAS%20Penang.csv",
         "Hotspot Sampah GIS": "https://raw.githubusercontent.com/fareeshairdeena/Waste-dashbaord/main/Hotspot%20sampah%20GIS%20Penang.csv"
     }
 }

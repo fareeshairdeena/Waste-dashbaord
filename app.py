@@ -103,7 +103,7 @@ region = st.sidebar.selectbox("🌍 Pilih Lokasi Negeri:", ["Selangor", "Penang"
 
 dataset_choice = st.sidebar.selectbox(
     "📁 Pilih Dataset:",
-    ["Semua Dataset", "Aduan Awam", "Bilangan Aduan JAS", "Hotspot Sampah GIS "]
+    ["Semua Dataset", "Aduan Awam", "Bilangan Aduan", "Hotspot Sampah GIS "]
 )
 
 files = {

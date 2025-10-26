@@ -93,8 +93,6 @@ with col2:
 # 8️⃣ Table view + Download option (INSIDE SIDEBAR)
 # ============================================================
 
-st.markdown("---")
-st.subheader("📊 Data Pengurusan Sisa Pepejal")
 
 # Sidebar Table Section
 st.sidebar.header("🗂️ Data Pengurusan Sisa Pepejal")
